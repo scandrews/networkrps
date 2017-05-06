@@ -1,0 +1,49 @@
+<!DOCTYPE html
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Network Rock Paper Scissors</title>
+
+		<link rel="stylesheet"
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+		integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+		crossorigin="anonymous">
+	<link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+	<h1>Networked Rock Paper Scissor</h1>
+	<div class="container">
+		<div class="row">
+			<div class="spaceBloc col-md-4">
+			</div>
+			<div class="userBloc col-md-6">
+				<input type="text" class="name" id="userName">
+				<input type="submit" id="startGame" name="Start">
+			</div>
+<!-- 			<div class="userBloc col-md-3">
+			</div>
+ -->		</div>
+		<div class="row">
+			<div class="col-md-3">
+			</div>
+			<div class="player1Bloc col-md-2">
+			<p>Waiting for Player 1</p> 
+			</div>
+			<div class="outcomeBloc col-md-2">
+			</div>
+			<div class="player2Bloc col-md-2">
+			<p>Waiting for Player 2</p>
+			</div>
+		</div>
+		<div class="messageBloc col-md-12">
+		</div>
+
+	</div>
+
+	<script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
+
+   	<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.js"></script>
+   	<script type="text/javascript" src="assets/javascript/script.js"></script>
+</body>

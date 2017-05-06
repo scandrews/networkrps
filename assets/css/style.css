@@ -1,0 +1,36 @@
+body{
+	
+}
+h1{
+	text-align: center;
+}
+.userBloc{
+	/*border: solid 2px blue;*/
+	/*margin: 10px;*/
+	height: 30px;
+}
+
+.player1Bloc{
+	border: solid 2px blue;
+	height: 200px;
+	margin: 5px;
+	text-align: center;
+}
+
+.outcomeBloc{
+	border: solid 2px blue;
+	height: 200px;
+	margin: 5px;
+}
+
+.player2Bloc{
+	border: solid 2px blue;
+	height: 200px;
+	margin: 5px;
+	text-align: center;
+}
+
+.messageBloc{
+	border: solid 2px blue;
+	height: 100px;
+}
