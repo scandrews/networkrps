@@ -16,64 +16,111 @@ firebase.initializeApp(config);
 var database = firebase.database();
 // Variable for player
 var playerStats = {
-		name: "",
-		wins: 3,
-		losses: 2,
-		guess: "george"
+			guess: "",
+			losses: 0,
+			name: "",
+			wins: 0,
 }
+var playerFlag = 1;
+var count = 0;
+var play1 = "";
+
+// create a directory for player stats
+var connectionsRef = database.ref("/players");
+var player1Ref = database.ref("/playerStats");
+
+// '.info/connected' is a special location provided by Firebase that is updated
+// every time the client's connection state changes.
+// '.info/connected' is a boolean value, true if the client is connected and false if they are not.
+var connectedRef = database.ref(".info/connected");
+console.log("connected ref - " + connectedRef);
+
+// When the client's connection state changes...
+connectedRef.on("value", function(snap) {
+	// If they are connected..
+	if (snap.val()) {
+		// Add user to the connections list.
+		var con = connectionsRef.push(true);
+		console.log("line 44 con - " + con);
+		// Remove user from the connection list when they disconnect.
+		con.onDisconnect().remove();
+	  }
+});
+
+// listener on playerstats - when player record is written
+database.ref("/playerStats").on("value", function(snapshot) {
+	console.log("line 52 playerstats - " + database.ref("/players"));
+
+
+	if (database.ref("/players") == null){
+		alert("oh shit");
+	}else{
+		alert("got the else, players - " + database.ref("/players"));
+	}
+
+		// console.log("line 59 - 2nd Player - " + secondPlayer);
+		// alert("line 60 - First Player - " + secondPlayer);
+
+// close database.ref
+});
+
+// set a listener on second player register
+database.ref("/players").on("value",function(snapshot){
+	// storing the snapshot.val() in a variable for convenience
+	var sv = snapshot.val();
+      
+	// Getting an array of each key In the snapshot object
+	var svArr = Object.keys(sv);
+
+	// Finding the last user's key
+	var lastIndex = svArr.length - 1;
+
+	var lastKey = svArr[lastIndex];
+
+	// Using the last user's key to access the last added user object
+	var player2Stats = sv[lastKey]
+	if(lastKey == play1){
+		console.log("false alarm - " + lastKey);
+		// not a new user
+	}
+	else{
+		// new user registered
+		console.log("the new user - " + player2Stats);
+		$(".player2Bloc").text(player2Stats.name);
+	}
+})
 
 
 
 
-// This function will do all of the communication with the firebase
-function updateGame(){
-	// Initially we'll check to see if another player has started
-
-   //  database.ref().get({
-   //      player: []
-   //      	player1Name: name,
-			// player1Wins: wins,
-			// player1Losses: losses,
-   //    });
-
-   //  if(player[].name == null){
-   //  	// We are the first player to register
-   //  }
-
-// If not then write a record as player 1
-    database.ref().set({
-        	player1Name: playerStats.name,
-			player1Wins: playerStats.wins,
-			player1Losses: playerStats.losses,
-			player1Guess: playerStats.guess
-      });
-
-// end function updateGame
-}
-
-
-
-// set a listener on the name/start game
+// set a listener on the name/click/start game
 $("#startGame").on("click", function(event) {
     event.preventDefault();
     playerStats.name = $("#userName").val().trim();
+	// write the name to screen
 	$(".userBloc").html("Hi " + playerStats.name);
+
+	// Check if first player to register
+
+	alert("line 105 playerFlag - " + playerFlag);
+	// Write screen and database record as player 1
 	$(".player1Bloc").text(playerStats.name);
-	updateGame()
+
+	// Save new value to Firebase
+	// database.ref("/playerstats").set({
+	// 	playerstats
+	// });
+
+	console.log("line 114 playerRef - " + player1Ref);
+	play1 = player1Ref.push(playerStats);
+	console.log("line 116 player one handle - " + play1);
+	play1.onDisconnect().remove();
+	playerFlag = 2;
+
 });
 
-// Set a database listener on another player register
-// database.ref().on("value", function(snapshot) {
-// Get the new user info
-	database.ref().get({
-		player2Name: playerStats.name,
-		player2Wins: playerStats.wins,
-		player2Losses: playerStats.losses,
-		player2Guess: playerStats.guess
-          });
 
-       console.log(snapshot.val());
-// });
+
 
 
 // end doc ready
