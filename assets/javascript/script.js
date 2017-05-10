@@ -14,110 +14,141 @@ firebase.initializeApp(config);
 
 // database reference
 var database = firebase.database();
-// Variable for player
-var playerStats = {
+// Variable for player1
+var player1Stats = {
 			guess: "",
 			losses: 0,
 			name: "",
 			wins: 0,
 }
-var playerFlag = 1;
+// Variable for player2
+var player2Stats = {
+			guess: "",
+			losses: 0,
+			name: "",
+			wins: 0,
+}
+var player1Key = "";
+var player2Key = "";
+var playerFlag = 0;
 var count = 0;
 var play1 = "";
-
-// create a directory for player stats
-var connectionsRef = database.ref("/players");
-var player1Ref = database.ref("/playerStats");
-
-// '.info/connected' is a special location provided by Firebase that is updated
-// every time the client's connection state changes.
-// '.info/connected' is a boolean value, true if the client is connected and false if they are not.
-var connectedRef = database.ref(".info/connected");
-console.log("connected ref - " + connectedRef);
-
-// When the client's connection state changes...
-connectedRef.on("value", function(snap) {
-	// If they are connected..
-	if (snap.val()) {
-		// Add user to the connections list.
-		var con = connectionsRef.push(true);
-		console.log("line 44 con - " + con);
-		// Remove user from the connection list when they disconnect.
-		con.onDisconnect().remove();
-	  }
-});
-
-// listener on playerstats - when player record is written
-database.ref("/playerStats").on("value", function(snapshot) {
-	console.log("line 52 playerstats - " + database.ref("/players"));
-
-
-	if (database.ref("/players") == null){
-		alert("oh shit");
-	}else{
-		alert("got the else, players - " + database.ref("/players"));
-	}
-
-		// console.log("line 59 - 2nd Player - " + secondPlayer);
-		// alert("line 60 - First Player - " + secondPlayer);
-
-// close database.ref
-});
-
-// set a listener on second player register
-database.ref("/players").on("value",function(snapshot){
-	// storing the snapshot.val() in a variable for convenience
-	var sv = snapshot.val();
-      
-	// Getting an array of each key In the snapshot object
-	var svArr = Object.keys(sv);
-
-	// Finding the last user's key
-	var lastIndex = svArr.length - 1;
-
-	var lastKey = svArr[lastIndex];
-
-	// Using the last user's key to access the last added user object
-	var player2Stats = sv[lastKey]
-	if(lastKey == play1){
-		console.log("false alarm - " + lastKey);
-		// not a new user
-	}
-	else{
-		// new user registered
-		console.log("the new user - " + player2Stats);
-		$(".player2Bloc").text(player2Stats.name);
-	}
-})
-
-
 
 
 // set a listener on the name/click/start game
 $("#startGame").on("click", function(event) {
     event.preventDefault();
-    playerStats.name = $("#userName").val().trim();
+    player1Stats.name = $("#userName").val().trim();
 	// write the name to screen
-	$(".userBloc").html("Hi " + playerStats.name);
+	$(".userBloc").html("Hi " + player1Stats.name);
+	// Write the name to the screen as player 1
+	$(".player1Bloc").text(player1Stats.name);
 
-	// Check if first player to register
+	if (playerFlag === 0){
+		console.log("registering 1st player");
+		// first player to register
+		playerFlag = 1;
+		// create a directory for player stats
+		var player1Ref = database.ref("/playerStats/1");
+		// write to database
+		player1Ref.set(player1Stats);
+		// Remove user from the connection list when they disconnect.
+		player1Ref.onDisconnect().remove();
+		console.log("line 57 player1Ref - " + player1Ref);
+	}
+	else {
 
-	alert("line 105 playerFlag - " + playerFlag);
-	// Write screen and database record as player 1
-	$(".player1Bloc").text(playerStats.name);
+	if (playerFlag === 1){
 
-	// Save new value to Firebase
-	// database.ref("/playerstats").set({
-	// 	playerstats
-	// });
-
-	console.log("line 114 playerRef - " + player1Ref);
-	play1 = player1Ref.push(playerStats);
-	console.log("line 116 player one handle - " + play1);
-	play1.onDisconnect().remove();
-	playerFlag = 2;
+		console.log("registerig 2nd player");
+		// second player to register
+		playerFlag = 2;
+		// create a directory for player stats
+		var player2Ref = database.ref("/playerStats/2");
+		// write to database
+		player2Ref.set(player1Stats);
+		// Remove user from the connection list when they disconnect.
+		player2Ref.onDisconnect().remove();
+		console.log("line 72 player1Ref - " + player2Ref);
+		//set upchoices
+		}
+	}
 
 });
+
+
+// set a listener on player register
+database.ref("/playerStats").on("value",function(snapshot){
+	// on database event
+	// storing the snapshot.val() in a variable for convenience
+	if(snapshot.val() == null){
+		return
+	}
+	var sv = snapshot.val();
+	// Getting an array of each key In the snapshot object
+	var svArr = Object.keys(sv);
+	// Finding the last user's key
+	var lastIndex = svArr.length - 1;
+	var lastKey = svArr[lastIndex];
+	console.log("line 93 lastKey - " + lastKey);
+	console.log("line 94 array length - " + svArr.length);
+	// Using the last user's key to access the last added user object
+	switch(svArr.length){
+		case 0:
+			// on program load
+			// no player has registered
+			// do nothing
+			console.log("database listener first player to reg")
+			break;
+		case 1:
+		// one player has registered
+			if (playerFlag === 0){
+			// 2nd player is just starting
+				// since 1 player is already registered (I'm player 2 starting up)
+				playerFlag = 1;
+				//write first players record to player 2 stats
+				player2Stats = sv[lastKey];
+				console.log("line 111 sv[lastKey] - " + sv[lastKey].name);
+				$(".player2Bloc").text(player2Stats.name);
+			}
+			else{ if (playerFlag === 1){
+				// this was triggered by our registering as player 1
+				console.log("line 116 player 1 registering");
+				// do nothing
+			}}
+			break;
+		case 2:
+			// 2 players are registered
+			console.log("line 122 playerflag - " + playerFlag);
+			switch(playerFlag) {
+				case 1:
+					// event: at player 1, player 2 registering
+					player2Stats = sv[lastKey];
+					$(".player2Bloc").text(player2Stats.name)
+					break;
+				case 2:
+					// 2nd player registering
+					// event triggered to the first player by the 
+					// Write the name to the screen as player 1
+					playerFlag = 3;
+					player2Stats = sv[lastIndex];
+					$(".player2Bloc").text(player2Stats.name);
+					console.log("the old user - " + player2Stats.name);
+					break;
+				case 3:
+					// this is a play event
+					console.log("this is a play event");
+					break;
+				default:
+					console.log("wtf")
+			}
+			break;
+		default:
+			console.log("got the default")
+	}
+
+// end database.ref
+})
 
 
 
