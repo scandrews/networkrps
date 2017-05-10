@@ -31,8 +31,11 @@ var player2Stats = {
 var player1Key = "";
 var player2Key = "";
 var playerFlag = 0;
+var player1Ref = "";
+var player2Ref = "";
 var count = 0;
 var play1 = "";
+var playing = false;
 
 
 // set a listener on the name/click/start game
@@ -42,14 +45,14 @@ $("#startGame").on("click", function(event) {
 	// write the name to screen
 	$(".userBloc").html("Hi " + player1Stats.name);
 	// Write the name to the screen as player 1
-	$(".player1Bloc").text(player1Stats.name);
+	$(".player1Bloc").html("<p>" + player1Stats.name + "</p>");
 
 	if (playerFlag === 0){
 		console.log("registering 1st player");
 		// first player to register
 		playerFlag = 1;
 		// create a directory for player stats
-		var player1Ref = database.ref("/playerStats/1");
+		player1Ref = database.ref("/playerStats/1");
 		// write to database
 		player1Ref.set(player1Stats);
 		// Remove user from the connection list when they disconnect.
@@ -64,7 +67,7 @@ $("#startGame").on("click", function(event) {
 		// second player to register
 		playerFlag = 2;
 		// create a directory for player stats
-		var player2Ref = database.ref("/playerStats/2");
+		player2Ref = database.ref("/playerStats/2");
 		// write to database
 		player2Ref.set(player1Stats);
 		// Remove user from the connection list when they disconnect.
@@ -93,6 +96,7 @@ database.ref("/playerStats").on("value",function(snapshot){
 	console.log("line 93 lastKey - " + lastKey);
 	console.log("line 94 array length - " + svArr.length);
 	// Using the last user's key to access the last added user object
+	// Use array length to determin how many players have registered
 	switch(svArr.length){
 		case 0:
 			// on program load
@@ -109,7 +113,8 @@ database.ref("/playerStats").on("value",function(snapshot){
 				//write first players record to player 2 stats
 				player2Stats = sv[lastKey];
 				console.log("line 111 sv[lastKey] - " + sv[lastKey].name);
-				$(".player2Bloc").text(player2Stats.name);
+				$(".player2Bloc").html("<p>" + player2Stats.name + "</p>");
+				$(".playBloc").html("Waiting For " + player2Stats.name + " To Choose");
 			}
 			else{ if (playerFlag === 1){
 				// this was triggered by our registering as player 1
@@ -123,8 +128,19 @@ database.ref("/playerStats").on("value",function(snapshot){
 			switch(playerFlag) {
 				case 1:
 					// event: at player 1, player 2 registering
-					player2Stats = sv[lastKey];
-					$(".player2Bloc").text(player2Stats.name)
+					if(playing === false){
+						console.log("event: at player 1, player 2 registering"); 
+						player2Stats = sv[lastKey];
+						$(".player2Bloc").html("<p>" + player2Stats.name + "<p>");
+						$(".playBloc").html("<p>It's Your Turn</p>")
+						$(".player1Bloc").append("<button type='button' class='btn btn-default' value='rock'>Rock</button>");
+						$(".player1Bloc").append("<button type='button' class='btn btn-default' value='paper'>Paper</button>");
+						$(".player1Bloc").append("<button type='button' class='btn btn-default' value='scissors'>Scissors</button>");
+					}
+					// else{
+						// at player 1, playing game
+						// do nothing
+					// }	
 					break;
 				case 2:
 					// 2nd player registering
@@ -132,12 +148,19 @@ database.ref("/playerStats").on("value",function(snapshot){
 					// Write the name to the screen as player 1
 					playerFlag = 3;
 					player2Stats = sv[lastIndex];
-					$(".player2Bloc").text(player2Stats.name);
+					$(".player2Bloc").html("<p>" + player2Stats.name + "</p>");
 					console.log("the old user - " + player2Stats.name);
 					break;
 				case 3:
 					// this is a play event
 					console.log("this is a play event");
+					// did he move or did I
+					// assume I'm player 2 got palyer 1 move event
+					$(".playBloc").html("<p>It's New Your Turn</p>");
+					$(".player1Bloc").append("<button type='button' class='btn btn-default' value='rock'>Rock</button>");
+					$(".player1Bloc").append("<button type='button' class='btn btn-default' value='paper'>Paper</button>");
+					$(".player1Bloc").append("<button type='button' class='btn btn-default' value='scissors'>Scissors</button>");
+					
 					break;
 				default:
 					console.log("wtf")
@@ -146,6 +169,18 @@ database.ref("/playerStats").on("value",function(snapshot){
 		default:
 			console.log("got the default")
 	}
+
+// listen for a play event
+$("button").on("click", function(event){
+	player1Stats.guess = this.value;
+	console.log("player 1 ref - " + player1Ref);
+	$(".player1Bloc").html("<p id='choice'>You Choose</p><p id='dispChoice'>" + player1Stats.guess + "</p>");
+	$(".playBloc").html("<p>Waiting For " + player2Stats.name + " To Make A Choice</p>");
+	playing = true;
+	player1Ref.set(player1Stats);
+	
+});
+
 
 // end database.ref
 })

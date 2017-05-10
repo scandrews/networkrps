@@ -4,10 +4,11 @@ body{
 h1{
 	text-align: center;
 }
-.userBloc{
+.userBloc .playBloc{
 	/*border: solid 2px blue;*/
 	/*margin: 10px;*/
 	height: 30px;
+	font-size: 14px;
 }
 
 .player1Bloc{
@@ -33,4 +34,16 @@ h1{
 .messageBloc{
 	border: solid 2px blue;
 	height: 100px;
+}
+
+#choice{
+	font-size: 16;
+}
+
+#dispChoice{
+	font-size: 20;
+}
+
+button{
+	margin: 4px;
 }
