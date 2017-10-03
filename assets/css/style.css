@@ -12,8 +12,13 @@ h1{
 }
 
 .player1Bloc{
+	border: solid 2px green;
+	height: 180px;
+}
+
+.player1GameBloc{
 	border: solid 2px blue;
-	height: 200px;
+	height: 300px;
 	margin: 5px;
 	text-align: center;
 }
@@ -26,10 +31,23 @@ h1{
 }
 
 .player2Bloc{
+	border: solid 2px green;
+	height: 180px;
+}
+
+.player2GameBloc{
 	border: solid 2px blue;
-	height: 200px;
+	height: 300px;
 	margin: 5px;
 	text-align: center;
+
+}
+
+.player1NameBloc{
+	border: solid 2px orange;
+}
+.player2NameBloc{
+	border: solid 2px orange;
 }
 
 .messageBloc{
