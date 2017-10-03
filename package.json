@@ -1,0 +1,26 @@
+{
+  "name": "networkrps",
+  "version": "1.0.0",
+  "description": "The Networked RPC application",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scandrews/networkrps.git"
+  },
+  "keywords": [
+    "none"
+  ],
+  "author": "Steven Andrews",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/scandrews/networkrps/issues"
+  },
+  "homepage": "https://github.com/scandrews/networkrps#readme",
+  "dependencies": {
+    "express": "^4.16.1"
+  }
+}
